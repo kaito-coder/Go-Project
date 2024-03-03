@@ -1,6 +1,9 @@
 postgres:
 	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 
+pgAdmin:
+	docker run --name pgadmin-container -p 5050:80 -e PGADMIN_DEFAULT_EMAIL=kaitok57a01@gmail.com -e PGADMIN_DEFAULT_PASSWORD=secret -d dpage/pgadmin4
+
 createdb:
 	docker exec -it postgres12 createdb --username=root --owner=root simple_bank
 
@@ -14,4 +17,8 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable" -verbose down
 sqlc:
 	sqlc generate
+
+test:
+	go test -v -cover ./...
+
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc

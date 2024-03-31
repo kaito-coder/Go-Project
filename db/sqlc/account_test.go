@@ -3,10 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/stretchr/testify/require"
 	"simple-bank/util"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestCreateAccount(t *testing.T) {
@@ -15,9 +16,9 @@ func TestCreateAccount(t *testing.T) {
 }
 func createRandomAccount(t *testing.T) Account {
 	account, err := testQueries.CreateAccount(context.Background(), CreateAccountParams{
-		Owner:    until.RandomOwner(),
-		Balance:  until.RandomMoney(),
-		Currency: until.RandomCurrency(),
+		Owner:    util.RandomOwner(),
+		Balance:  util.RandomMoney(),
+		Currency: util.RandomCurrency(),
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
@@ -38,7 +39,7 @@ func TestUpdateAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
 	arg := UpdateAccountParams{
 		ID:      account1.ID,
-		Balance: until.RandomMoney(),
+		Balance: util.RandomMoney(),
 	}
 	account2, err := testQueries.UpdateAccount(context.Background(), arg)
 	require.NoError(t, err)

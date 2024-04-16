@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -12,9 +14,6 @@ import (
 	db "simple-bank/db/sqlc"
 	"simple-bank/util"
 	"testing"
-
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/require"
 )
 
 func TestGetAccountAPI(t *testing.T) {

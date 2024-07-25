@@ -8,11 +8,23 @@ services:
       - POSTGRES_DB=simple_bank
     ports:
       - '5432:5432'
-    # healthcheck:
-    #   test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    networks:
+      - my_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+    networks:
+      - my_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
   api:
     build:
       context: .
@@ -25,13 +37,12 @@ services:
       - postgres
     entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
     command: ['/app/main']
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 10
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "200k"
-    #     max-file: "10"
+    networks:
+      - my_network
+
+volumes:
+  pgadmin_data:
+
+networks:
+  my_network:
+    driver: bridge

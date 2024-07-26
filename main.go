@@ -2,15 +2,19 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"log"
 	"simple-bank/api"
 	db "simple-bank/db/sqlc"
 	until "simple-bank/util"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	config, err := until.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load Config")
+	}
 	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)

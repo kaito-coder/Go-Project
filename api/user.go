@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	db "simple-bank/db/sqlc"
 	"simple-bank/util"
@@ -45,6 +46,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	fmt.Println(req)
 	hashedPassword, err := util.HashPassword(req.Password)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
@@ -57,6 +59,7 @@ func (server *Server) createUser(ctx *gin.Context) {
 		Email:          req.Email,
 	}
 	user, err := server.store.CreateUser(ctx, arg)
+	fmt.Println(user)
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			switch pqErr.Code.Name() {

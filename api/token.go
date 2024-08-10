@@ -10,11 +10,11 @@ import (
 )
 
 type renewAccessTokenRequest struct {
-	RefreshToken string `json:"refresh_token" json:"refresh_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 type renewAccessTokenResponse struct {
-	AccessToken          string    `json: "access_token"`
-	AccessTokenExpiresAt time.Time `json: "access_token_expires_at"`
+	AccessToken          string    `json:"access_token"`
+	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
 }
 
 func (server *Server) renewAccessToken(ctx *gin.Context) {

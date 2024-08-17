@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (server *Server) LoginUser(ctx context.Context,req *pb.LoginUserRequest) (*pb.LoginUserReponse, error) {
+func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserReponse, error) {
 	user, err := server.store.GetUser(ctx, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -35,26 +35,26 @@ func (server *Server) LoginUser(ctx context.Context,req *pb.LoginUserRequest) (*
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to create refresh token")
 	}
+	mtdt := server.extractMetadata(ctx)
 	session, err := server.store.CreateSession(ctx, db.CreateSessionParams{
 		RefreshToken: refreshToken,
 		ID:           refreshPayload.ID,
 		Username:     user.Username,
 		ExpiresAt:    refreshPayload.ExpiredAt,
-		UserAgent:    "", //TODO: get user agent from request,
-		ClientIp:     "",          //TODO: get IP address from request,
+		UserAgent:    mtdt.UserAgent, //TODO: get user agent from request,
+		ClientIp:     mtdt.ClientIP,  //TODO: get IP address from request,
 		IsBlocked:    false,
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "failed to create session")
 	}
 	rsb := &pb.LoginUserReponse{
-		User: convertUser(user),
-		SessionId: session.ID.String(),
-		AccessTokenExpiresAt: timestamppb.New(accessPayload.ExpiredAt),
+		User:                  convertUser(user),
+		SessionId:             session.ID.String(),
+		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
-		RefreshToken: refreshToken,
-		AccessToken: accessToken,
-
+		RefreshToken:          refreshToken,
+		AccessToken:           accessToken,
 	}
 	return rsb, nil
 }
